@@ -26,12 +26,11 @@ const AddDevice = () => {
   };
 
   const handleAddDevice = async () => {
-    if (!deviceName || !deviceId || !category) {
-      alert('Please fill in all required fields!');
-      return;
-    }
-
     try {
+      if (!deviceName || !deviceId || !category) {
+        alert('Please fill in all required fields!');
+        return;
+      }
       let imageUrl = '';
       if (image) {
         const storageRef = ref(storage, `deviceImages/${Date.now()}-${image.name}`);
@@ -62,7 +61,7 @@ const AddDevice = () => {
       setImagePreview('');
     } catch (error) {
       console.error('Error adding device:', error);
-      alert('Failed to add device');
+      alert('Failed to add device: ' + error.message);
     }
   };
 

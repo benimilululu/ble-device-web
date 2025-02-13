@@ -1,8 +1,21 @@
 .App {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f6f7f9, #edf2f7);
-  padding: 20px;
+  text-align: center;
 }
+
+.App-header {
+  display: flex;
+  flex-direction: row; /* Align children horizontally */
+  justify-content: space-around; /* Distribute space evenly between components */
+  align-items: flex-start; /* Align items to the top */
+  /* height: 100vh; */
+  padding: 40px;
+}
+
+.AddDevice, .DeviceList {
+  width: 25%; /* Each component will take up 45% of the container width */
+  margin: 10px; /* Add some space between the components */
+}
+
 
 .App-header {
   width: 100%;

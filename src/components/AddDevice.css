@@ -40,7 +40,7 @@
 
 .form-input,
 .form-select {
-  width: 100%;
+  width: 80%;
   padding: 0.75rem 1rem;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
@@ -144,4 +144,19 @@
     margin: 1rem;
     padding: 1.5rem;
   }
+}
+
+.form-group {
+  position: relative; /* Make the form group a positioning context */
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  position: absolute;
+  top: 100%; /* Position the error message directly below the input */
+  left: 0;
+  margin-top: 5px; /* Add some space between the input and error message */
+  width: 100%; /* Make sure it spans the width of the input */
+  font-weight: bold;
 }

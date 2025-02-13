@@ -1,8 +1,6 @@
-
-import React, { useState } from 'react';
-import { db } from '../firebase';
-import { collection, addDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import React, { useState, useEffect } from 'react';
+import { db } from '../firebase'; // Import db from firebase.js
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore'; // Import necessary Firestore functions
 import './AddDevice.css';
 
 const AddDevice = () => {
@@ -13,68 +11,97 @@ const AddDevice = () => {
   const [priceType, setPriceType] = useState('price');
   const [price, setPrice] = useState('');
   const [discount, setDiscount] = useState('');
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
-  import { storage } from '../firebase';
+  const [loading, setLoading] = useState(false);
+  const [deviceExists, setDeviceExists] = useState(false); // New state for checking device ID
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const handleAddDevice = async () => {
-    try {
-      if (!deviceName || !deviceId || !category) {
-        alert('Please fill in all required fields!');
+  // Function to check if the device ID exists
+  useEffect(() => {
+    const checkDeviceId = async () => {
+      if (!deviceId) {
+        setDeviceExists(false); // If device ID is empty, reset the error state
         return;
       }
-      let imageUrl = '';
-      if (image) {
-        try {
-          const storageRef = ref(storage, `deviceImages/${Date.now()}-${image.name}`);
-          const uploadTask = await uploadBytesResumable(storageRef, image);
-          imageUrl = await getDownloadURL(uploadTask.ref);
-        } catch (error) {
-          console.error('Error uploading image:', error);
-          alert('Failed to upload image: ' + error.message);
-          return;
-        }
-      }
 
+      try {
+        const q = query(collection(db, 'devices'), where('id', '==', deviceId));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          setDeviceExists(true);
+          setErrorMessage('Device ID already exists');
+        } else {
+          setDeviceExists(false);
+          setErrorMessage('');
+        }
+      } catch (error) {
+        console.error('Error checking device ID:', error);
+        setDeviceExists(false);
+        setErrorMessage('');
+      }
+    };
+
+    checkDeviceId();
+  }, [deviceId, db]); // Check device ID whenever it changes
+
+  const handleAddDevice = async () => {
+    if (!deviceName || !deviceId || !category) {
+      alert('Please fill in all required fields!');
+      return;
+    }
+
+    if (deviceExists) {
+      alert('Please choose a unique device ID.');
+      return;
+    }
+
+    if (priceType === 'price' && (isNaN(price) || parseFloat(price) < 0)) {
+      alert('Please enter a valid price.');
+      return;
+    }
+
+    if (priceType === 'discount' && (isNaN(discount) || parseFloat(discount) < 0 || parseFloat(discount) > 100)) {
+      alert('Please enter a valid discount percentage (0-100).');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
       await addDoc(collection(db, 'devices'), {
         name: deviceName,
         id: deviceId,
         category,
         description,
         priceType,
-        price: priceType === 'price' ? parseFloat(price) || 0 : null,
-        discount: priceType === 'discount' ? parseFloat(discount) || 0 : null,
-        imageUrl,
+        price: priceType === 'price' ? parseFloat(price) : null,
+        discount: priceType === 'discount' ? parseFloat(discount) : null,
         addedAt: new Date().toISOString(),
       });
 
       alert('Device added successfully!');
-      setDeviceName('');
-      setDeviceId('');
-      setCategory('');
-      setDescription('');
-      setPrice('');
-      setDiscount('');
-      setImage(null);
-      setImagePreview('');
+      resetForm();
     } catch (error) {
       console.error('Error adding device:', error);
       alert('Failed to add device: ' + error.message);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setDeviceName('');
+    setDeviceId('');
+    setCategory('');
+    setDescription('');
+    setPrice('');
+    setDiscount('');
   };
 
   return (
     <div className="add-device-container">
       <h2 className="add-device-heading">Add New Device</h2>
       <div className="form-layout">
+        {/* Device Name */}
         <div className="form-group">
           <label className="form-label" htmlFor="deviceName">Device Name</label>
           <input
@@ -87,6 +114,7 @@ const AddDevice = () => {
           />
         </div>
 
+        {/* Device ID */}
         <div className="form-group">
           <label className="form-label" htmlFor="deviceId">Device ID</label>
           <input
@@ -97,8 +125,10 @@ const AddDevice = () => {
             className="form-input"
             placeholder="Enter device ID"
           />
+          {deviceExists && <p className="error-message">{errorMessage}</p>} {/* Display error message */}
         </div>
 
+        {/* Category */}
         <div className="form-group">
           <label className="form-label" htmlFor="category">Category</label>
           <select
@@ -115,6 +145,7 @@ const AddDevice = () => {
           </select>
         </div>
 
+        {/* Price Type */}
         <div className="form-group">
           <label className="form-label">Price Type</label>
           <div className="radio-group">
@@ -139,6 +170,7 @@ const AddDevice = () => {
           </div>
         </div>
 
+        {/* Price/Discount Input */}
         <div className="form-group">
           <label className="form-label">
             {priceType === 'price' ? 'Price ($)' : 'Discount (%)'}
@@ -154,38 +186,9 @@ const AddDevice = () => {
           />
         </div>
 
-        <div className="form-group full-width">
-          <label className="form-label" htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="form-input"
-            placeholder="Enter device description"
-            rows="4"
-          />
-        </div>
-
-        <div className="form-group full-width">
-          <div className="image-upload-container">
-            <label className="image-upload-label" htmlFor="image">
-              {image ? 'Change Image' : 'Upload Image'}
-            </label>
-            <input
-              type="file"
-              id="image"
-              onChange={handleImageChange}
-              accept="image/*"
-              style={{ display: 'none' }}
-            />
-            {imagePreview && (
-              <img src={imagePreview} alt="Preview" className="image-preview" />
-            )}
-          </div>
-        </div>
-
-        <button onClick={handleAddDevice} className="add-device-button">
-          Add Device
+        {/* Submit Button */}
+        <button onClick={handleAddDevice} className="add-device-button" disabled={loading}>
+          {loading ? 'Adding Device...' : 'Add Device'}
         </button>
       </div>
     </div>

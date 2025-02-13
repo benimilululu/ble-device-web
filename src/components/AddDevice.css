@@ -1,83 +1,127 @@
+
 .add-device-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 600px;
-    margin: 50px auto;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
+  margin: 50px auto;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.add-device-heading {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.image-upload-container {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.image-input {
+  display: none;
+}
+
+.image-upload-label {
+  display: block;
+  width: 100%;
+  height: 200px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.image-upload-label:hover {
+  border-color: #3498db;
+}
+
+.upload-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.upload-placeholder i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #eef2f7;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #1a1a1a;
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus, .form-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-select {
+  cursor: pointer;
+}
+
+.add-device-button {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.add-device-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+}
+
+.add-device-button:active {
+  transform: translateY(0);
+}
+
+.add-device-button:disabled {
+  background: #e0e0e0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .add-device-container {
+    margin: 20px;
+    padding: 1.5rem;
   }
-  
-  .add-device-heading {
-    font-size: 24px;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .form-group {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-  
-  .form-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 5px;
-  }
-  
-  .input-group {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 8px;
-    background-color: #f9f9f9;
-  }
-  
-  .input-icon {
-    font-size: 18px;
-    color: #7f8c8d;
-    margin-right: 10px;
-  }
-  
-  .form-input, .form-select {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background-color: transparent;
-    font-size: 16px;
-    color: #2c3e50;
-  }
-  
-  .form-input:focus, .form-select:focus {
-    outline: none;
-    border-color: #3498db;
-  }
-  
-  .add-device-button {
-    background-color: #3498db;
-    color: white;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%;
-  }
-  
-  .add-device-button:hover {
-    background-color: #2980b9;
-  }
-  
-  .add-device-button:disabled {
-    background-color: #bdc3c7;
-    cursor: not-allowed;
-  }
-  
+}

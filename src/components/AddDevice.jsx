@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import './AddDevice.css';
 
 const AddDevice = () => {
@@ -15,7 +15,7 @@ const AddDevice = () => {
   const [discount, setDiscount] = useState('');
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-  const storage = getStorage();
+  const { storage } = require('../firebase');
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];

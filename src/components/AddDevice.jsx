@@ -7,6 +7,8 @@ const AddDevice = () => {
   const [deviceName, setDeviceName] = useState('');
   const [deviceId, setDeviceId] = useState('');
   const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
 
   const handleAddDevice = async () => {
     if (!deviceName || !deviceId || !category) {
@@ -20,15 +22,19 @@ const AddDevice = () => {
         name: deviceName,
         id: deviceId,
         category: category,
+        description: description,
+        price: parseFloat(price) || 0,
         addedAt: new Date().toISOString(),
       });
 
       alert('Device added successfully!');
-      
+
       // Clear the input fields
       setDeviceName('');
       setDeviceId('');
       setCategory('');
+      setDescription('');
+      setPrice('');
     } catch (error) {
       console.error('Error adding device:', error);
       alert('Failed to add device');
@@ -69,6 +75,24 @@ const AddDevice = () => {
           <option value="Accessories">Accessories</option>
           <option value="Sports">Sports</option>
         </select>
+      </div>
+      <div className="form-group">
+        <input
+          type="text"
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="form-input"
+        />
+      </div>
+      <div className="form-group">
+        <input
+          type="number"
+          placeholder="Price"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          className="form-input"
+        />
       </div>
       <button onClick={handleAddDevice} className="add-device-button">
         Add Device

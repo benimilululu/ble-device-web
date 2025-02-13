@@ -1,0 +1,30 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User document rules
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Device document rules
+    match /devices/{deviceId} {
+      allow read: if true;  // Allow public reading of devices
+      allow write: if request.auth != null; // Any authenticated user can write
+      allow create: if request.auth != null && 
+        request.resource.data.keys().hasAll(['name', 'id', 'category', 'addedAt']) &&
+        request.resource.data.priceType in ['price', 'discount'];
+    }
+  }
+}
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read: if true;  // Allow public reading of images
+      allow write: if request.auth != null && 
+        request.resource.size < 5 * 1024 * 1024 && // 5MB max file size
+        request.resource.contentType.matches('image/.*'); // Only allow images
+    }
+  }
+}

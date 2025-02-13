@@ -15,7 +15,7 @@ const AddDevice = () => {
   const [discount, setDiscount] = useState('');
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-  const { storage } = require('../firebase');
+  import { storage } from '../firebase';
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -33,9 +33,15 @@ const AddDevice = () => {
       }
       let imageUrl = '';
       if (image) {
-        const storageRef = ref(storage, `deviceImages/${Date.now()}-${image.name}`);
-        const uploadTask = await uploadBytesResumable(storageRef, image);
-        imageUrl = await getDownloadURL(uploadTask.ref);
+        try {
+          const storageRef = ref(storage, `deviceImages/${Date.now()}-${image.name}`);
+          const uploadTask = await uploadBytesResumable(storageRef, image);
+          imageUrl = await getDownloadURL(uploadTask.ref);
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          alert('Failed to upload image: ' + error.message);
+          return;
+        }
       }
 
       await addDoc(collection(db, 'devices'), {
